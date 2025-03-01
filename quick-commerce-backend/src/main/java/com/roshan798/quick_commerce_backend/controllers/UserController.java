@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.roshan798.quick_commerce_backend.dto.ResponseDTO;
-import com.roshan798.quick_commerce_backend.dto.UserDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserDTO;
 import com.roshan798.quick_commerce_backend.models.User;
 import com.roshan798.quick_commerce_backend.service.UserService;
 
@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("api/v1/users")
-//@CrossOrigin("**")
 public class UserController {
 
 	@Autowired

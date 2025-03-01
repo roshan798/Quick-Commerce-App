@@ -1,4 +1,4 @@
-package com.roshan798.quick_commerce_backend.dto;
+package com.roshan798.quick_commerce_backend.dto.user;
 
 import java.time.Instant;
 

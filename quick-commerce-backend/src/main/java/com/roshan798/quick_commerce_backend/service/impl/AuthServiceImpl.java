@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.roshan798.quick_commerce_backend.dto.UserLoginDTO;
-import com.roshan798.quick_commerce_backend.dto.UserRegisterDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserLoginDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserRegisterDTO;
 import com.roshan798.quick_commerce_backend.exceptions.InvalidTokenException;
 import com.roshan798.quick_commerce_backend.exceptions.UserAlreadyExist;
 import com.roshan798.quick_commerce_backend.exceptions.UserNotFoundException;
@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
 
 		String email = userData.getEmail();
 		String password = userData.getPassword();
-		Optional<User> user = userRepo.findByEmail(email);
+		Optional<User> user = userRepo.findByEmailAndEnabledTrue(email);
 
 		if (user.isEmpty() || !passwordEncoder.matches(password, user.get().getPassword())) {
 			log.warn("Invalid login attempt for email: {}", email);
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
 		String email = userData.getEmail();
 		String password = userData.getPassword();
-		Optional<User> user = userRepo.findByEmail(email);
+		Optional<User> user = userRepo.findByEmailAndEnabledTrue(email);
 
 		if (user.isPresent()) {
 			log.warn("User with email {} already exists", email);
@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		String email = jwtUtil.extractEmail(refreshToken);
-		Optional<User> userOpt = userRepo.findByEmail(email);
+		Optional<User> userOpt = userRepo.findByEmailAndEnabledTrue(email);
 
 		if (userOpt.isEmpty()) {
 			log.warn("User not found for refresh token");

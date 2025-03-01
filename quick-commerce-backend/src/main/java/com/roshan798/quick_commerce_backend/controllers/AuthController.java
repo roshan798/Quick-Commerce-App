@@ -3,16 +3,15 @@ package com.roshan798.quick_commerce_backend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.roshan798.quick_commerce_backend.dto.ResponseDTO;
-import com.roshan798.quick_commerce_backend.dto.UserDTO;
-import com.roshan798.quick_commerce_backend.dto.UserLoginDTO;
-import com.roshan798.quick_commerce_backend.dto.UserRegisterDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserLoginDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserRegisterDTO;
 import com.roshan798.quick_commerce_backend.models.Role;
 import com.roshan798.quick_commerce_backend.models.User;
 import com.roshan798.quick_commerce_backend.service.AuthService;
@@ -30,11 +29,6 @@ public class AuthController {
 
 	@Autowired
 	private AuthService authService;
-
-	@GetMapping
-	protected String sayHello() {
-		return "Hello";
-	}
 
 	@PostMapping("/signup")
 	protected ResponseEntity<ResponseDTO<UserDTO>> register(@RequestBody UserRegisterDTO userData) {

@@ -1,7 +1,7 @@
 package com.roshan798.quick_commerce_backend.service;
 
-import com.roshan798.quick_commerce_backend.dto.UserLoginDTO;
-import com.roshan798.quick_commerce_backend.dto.UserRegisterDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserLoginDTO;
+import com.roshan798.quick_commerce_backend.dto.user.UserRegisterDTO;
 import com.roshan798.quick_commerce_backend.models.User;
 
 import jakarta.servlet.http.HttpServletRequest;

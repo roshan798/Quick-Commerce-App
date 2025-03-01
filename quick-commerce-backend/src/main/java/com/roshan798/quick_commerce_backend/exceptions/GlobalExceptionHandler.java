@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.roshan798.quick_commerce_backend.dto.ResponseDTO;
+import com.roshan798.quick_commerce_backend.exceptions.product.ProductNotFound;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 
-	/// Handling Validation Errors (like in requstbody different type parameters)
+	/// Handling Validation Errors (like in requestbody different type parameters)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ResponseDTO<Map<String, String>>> handleValidationExceptions(
 			MethodArgumentNotValidException ex) {
@@ -51,15 +52,13 @@ public class GlobalExceptionHandler {
 	// Handling Access Denied
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ResponseDTO<String>> handleAccessDeniedException(AccessDeniedException ex) {
-		ResponseDTO<String> response = ResponseDTO.<String>builder().success(false)
-				.message("Access Denied: " + ex.getMessage()).data(null).build();
+		ResponseDTO<String> response = new ResponseDTO<String>(false, "Access Denied: " + ex.getMessage(), null);
 		return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler(InvalidTokenException.class)
 	public ResponseEntity<ResponseDTO<String>> handleInvalidTokenException(InvalidTokenException ex) {
-		ResponseDTO<String> response = ResponseDTO.<String>builder().success(false).message(ex.getMessage()).data(null)
-				.build();
+		ResponseDTO<String> response = new ResponseDTO<String>(false, "Error: " + ex.getMessage(), null);
 		return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
 	}
 
@@ -70,11 +69,18 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.CONFLICT);
 	}
 
+	/// product exceptions
+
+	@ExceptionHandler(ProductNotFound.class)
+	public ResponseEntity<ResponseDTO<String>> handleProductNotFoundException(ProductNotFound ex) {
+		ResponseDTO<String> response = new ResponseDTO<String>(false, "Error: " + ex.getMessage(), null);
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
+
 	// Global
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ResponseDTO<String>> handleGenericException(Exception ex) {
-		ResponseDTO<String> response = ResponseDTO.<String>builder().success(false).message("Error: " + ex.getMessage())
-				.data(null).build();
+		ResponseDTO<String> response = new ResponseDTO<String>(false, "Error: " + ex.getMessage(), null);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
