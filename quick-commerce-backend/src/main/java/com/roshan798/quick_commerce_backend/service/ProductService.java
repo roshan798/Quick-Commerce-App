@@ -12,4 +12,8 @@ public interface ProductService {
 
 	Page<Product> getProducts(int page, int size, String orderBy);
 
+	boolean deleteProductById(Long id);
+
+	Product updateProductById(Long id, ProductDTO product);
+
 }

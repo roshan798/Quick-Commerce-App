@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +58,28 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PutMapping("/{id}")
+	public ResponseEntity<ResponseDTO<ProductDTO>> updateProductById(@PathVariable Long id,
+			@RequestBody ProductDTO product) {
+		log.info("Entering updateProductById with ID: {}", id);
+		Product updatedProduct = service.updateProductById(id, product);
+
+		ResponseDTO<ProductDTO> response = new ResponseDTO<>(true, "Product details updated successfully.",
+				new ProductDTO(updatedProduct));
+		log.info("Exiting updateProductById with response: {}", response);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ResponseDTO<Void>> deleteProductById(@PathVariable Long id) {
+		log.info("Entering deleteProductById with ID: {}", id);
+		boolean result = service.deleteProductById(id);
+		ResponseDTO<Void> response = new ResponseDTO<Void>(result, "Product deleted successfully.", null);
+		log.info("Exiting deleteProductById with response: {}", response);
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping
 	public ResponseEntity<PaginatedResponseDTO<ProductDTO>> getProducts(@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "name") String orderBy) {
@@ -64,7 +88,6 @@ public class ProductController {
 
 		Page<Product> productPage = service.getProducts(page, size, orderBy);
 
-		// Convert Product to DTO
 		List<ProductDTO> productDTOs = productPage.getContent().stream().map(ProductDTO::new).toList();
 
 		PaginatedResponseDTO<ProductDTO> responseDTO = new PaginatedResponseDTO<>(true, "Products fetched successfully",
