@@ -1,9 +1,18 @@
+CREATE DATABASE quick_commerce;
+
 USE quick_commerce;
+SHOW tables;
 DESCRIBE users;
 desc users;
+desc carts;
+desc cart_items;
+
+
 -- SELECT
 SELECT * FROM users;
 SELECT * FROM products;
+SELECT * FROM carts;
+SELECT * FROM cart_items;
 -- SELECT
 
 
