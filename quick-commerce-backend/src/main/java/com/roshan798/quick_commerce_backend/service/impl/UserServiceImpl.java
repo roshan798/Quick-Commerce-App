@@ -22,9 +22,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserById(Long id) {
 		log.info("Fetching user by ID: {}", id);
-		return repo.findById(id).orElseThrow(() -> {
+		return repo.findByIdAndEnabledTrue(id).orElseThrow(() -> {
 			log.warn("User with ID {} not found", id);
 			return new UserNotFoundException("User with ID: " + id + " does not exist.");
+		});
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		log.info("Fetching user by Email: {}", email);
+		return repo.findByEmailAndEnabledTrue(email).orElseThrow(() -> {
+			log.warn("User with Email {} not found", email);
+			return new UserNotFoundException("User with Email: " + email + " does not exist.");
 		});
 	}
 

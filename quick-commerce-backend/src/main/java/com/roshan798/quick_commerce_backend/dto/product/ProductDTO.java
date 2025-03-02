@@ -21,7 +21,7 @@ public class ProductDTO {
 	private String name;
 //	private String image;
 	private String description;
-	private Integer price;
+	private Double price;
 	private Instant updatedAt;
 	private Instant createdAt;
 	private List<Order> orders;

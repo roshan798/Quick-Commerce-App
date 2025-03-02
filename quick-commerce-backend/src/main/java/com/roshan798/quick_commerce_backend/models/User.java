@@ -37,10 +37,10 @@ public class User {
 	private String name; // Full name of the user
 
 	@Column(nullable = false, unique = true)
-	private String email; // Unique email for user identification
+	private String email;
 
 	@Column(nullable = false)
-	private String password; // Encrypted password for authentication
+	private String password;
 
 	private String provider; // OAuth provider (e.g., Google, Facebook)
 
