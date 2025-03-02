@@ -42,19 +42,21 @@ public class JwtFilter extends OncePerRequestFilter {
 				log.warn("JWT Token expired or invalid for request: {}", request.getRequestURI());
 				tokenService.refreshTokenIfNeeded(request, response);
 			} else {
-				authenticateUser(token);
+				authenticateUser(request, token);
 			}
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
-	private void authenticateUser(String token) {
+	private void authenticateUser(HttpServletRequest request, String token) {
 		String email = jwtUtil.extractEmail(token);
 		UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
 				userDetails.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		log.info("setting requst.email : {}", email);
+		request.setAttribute("email", email);
 		log.info("User authenticated: {}", email);
 	}
 }
