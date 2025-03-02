@@ -13,8 +13,6 @@ import com.roshan798.quick_commerce_backend.dto.user.UserDTO;
 import com.roshan798.quick_commerce_backend.models.User;
 import com.roshan798.quick_commerce_backend.service.UserService;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,17 +32,4 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping("/debug/cookies")
-	public ResponseEntity<?> debugCookies(HttpServletRequest request) {
-		log.info("Entering cookie debug endpoint");
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				log.info("Cookie: {} = {}", cookie.getName(), cookie.getValue());
-			}
-		} else {
-			log.info("No cookies found");
-		}
-		return ResponseEntity.ok("Check server logs for cookies.");
-	}
 }

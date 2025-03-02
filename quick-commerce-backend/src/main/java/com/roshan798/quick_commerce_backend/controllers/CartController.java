@@ -43,7 +43,6 @@ public class CartController {
 	UserService userService;
 
 	// CRUD
-//	✅ DELETE /cart/clear → Clear all cart items
 	@PostMapping
 	public ResponseEntity<ResponseDTO<Void>> addProductToCart(@RequestBody AddToCartRequest data,
 			HttpServletRequest request) {
