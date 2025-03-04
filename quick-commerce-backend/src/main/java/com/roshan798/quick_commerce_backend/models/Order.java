@@ -1,14 +1,23 @@
 package com.roshan798.quick_commerce_backend.models;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,23 +39,25 @@ public class Order {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private OrderStatus status; // "pending", "shipped", "delivered", "cancelled"
 
 	@Column(columnDefinition = "VARCHAR(6) DEFAULT 'quick'")
 	@Builder.Default
 	private String type = "quick";
 
-	private Integer price;
+	@Builder.Default
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderItem> items = new ArrayList<>();
+
 	private String address;
-	private Integer qty;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id", nullable = false)
-	private Product product;
+	@CreationTimestamp
+	@Column(updatable = false, nullable = false)
+	private Instant createdAt;
 
-	@Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@UpdateTimestamp
+	@Column(nullable = false)
 	private Instant updatedAt;
 
-	@Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	private Instant createdAt;
 }

@@ -2,6 +2,9 @@ package com.roshan798.quick_commerce_backend.models;
 
 import java.time.Instant;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -36,9 +39,11 @@ public class Inventory {
 	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "inventories_product_id_products_id_fk"))
 	private Product product;
 
-	@Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@CreationTimestamp
+	@Column(name = "updated_at")
 	private Instant updatedAt;
 
-	@Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@UpdateTimestamp
+	@Column(name = "created_at")
 	private Instant createdAt;
 }

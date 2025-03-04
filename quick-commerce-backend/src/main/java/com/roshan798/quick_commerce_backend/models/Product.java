@@ -44,7 +44,7 @@ public class Product {
 	private Instant updatedAt;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Order> orders;
+	private List<OrderItem> orders;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Inventory> inventories;

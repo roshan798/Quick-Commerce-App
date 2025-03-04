@@ -6,6 +6,8 @@ DESCRIBE users;
 desc users;
 desc carts;
 desc cart_items;
+desc orders;
+desc order_items;
 
 
 -- SELECT
@@ -13,6 +15,7 @@ SELECT * FROM users;
 SELECT * FROM products;
 SELECT * FROM carts;
 SELECT * FROM cart_items;
+SELECT * FROM orders;
 -- SELECT
 
 
