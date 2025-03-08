@@ -1,4 +1,4 @@
-import { User } from "../types"
+import { Cart, User } from "../types"
 
 export type UserState = {
     user: User | null
@@ -6,5 +6,10 @@ export type UserState = {
 
 
 export type RootState = {
-    auth: UserState
+    auth: UserState,
+    cart : CartState
+}
+
+export type CartState = {
+    cart : Cart | null
 }

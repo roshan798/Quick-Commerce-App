@@ -4,19 +4,19 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/types";
 import { logoutUser } from "../store/user.slice"
 import { logout } from "../http/auth";
-
+import { setCart } from "../store/cart.slice";
 const Navbar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state?.auth.user);
   const isUserLoggedIn = Boolean(user != null && user != undefined);
-  console.log("user", user, isUserLoggedIn);
-
+  const cart = useSelector((state: RootState) => state.cart.cart);
   const handleLogoutClick = async () => {
     try {
       await logout();
       dispatch(logoutUser());
+      dispatch(setCart(null))
       navigate("/login")
     } catch (error) {
       console.log(error);
@@ -47,9 +47,15 @@ const Navbar = () => {
               </Link>
             )}
 
-            {isUserLoggedIn && <Button variant="outline" onClick={handleLogoutClick}>
-              Logout
-            </Button>}
+            {isUserLoggedIn &&
+              <div className="flex flex-row gap-2 items-center justify-between">
+                <Button variant="outline" onClick={handleLogoutClick}>
+                  Logout
+                </Button>
+                <div>Cart : {cart === null ? 0 : cart?.cartItems?.length}</div>
+
+              </div>
+            }
           </div>
         </div>
       </div>

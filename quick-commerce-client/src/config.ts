@@ -3,9 +3,11 @@ const CONFIG = {
     AUTH: {
         LOGIN: "/auth/login",
         SIGNUP: "/auth/signup",
-        LOGOUT: "/auth/logout", 
-        REFRESH: "/auth/refresh", 
+        LOGOUT: "/auth/logout",
+        REFRESH: "/auth/refresh",
     },
+    CART: "/cart",
+    PRODUCTS: "/products"
 };
 
 export default CONFIG;
