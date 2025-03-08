@@ -13,7 +13,6 @@ const ProductCard = ({ product }: ProductCartProps) => {
     const cart = useSelector((state: RootState) => state.cart.cart);
 
     const cartItem = cart?.cartItems?.find(item => item.productId === product.productId);
-
     const handleIncrease = async () => {
         try {
             dispatch(addProductToCart(product.productId))

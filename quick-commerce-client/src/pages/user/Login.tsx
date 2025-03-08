@@ -10,9 +10,7 @@ import { LoginRequest } from "../../types/auth";
 import { AxiosError, AxiosResponse } from "axios";
 import { setUser } from "../../store/user.slice";
 import { useDispatch } from 'react-redux'
-import { setCart } from "../../store/cart.slice";
-import { ApiResponse, Cart } from "../../types";
-import { getUserCart } from "../../http/cart";
+
 
 // Define the validation schema
 const loginSchema = z.object({
@@ -38,18 +36,17 @@ const Login = () => {
         resolver: zodResolver(loginSchema),
     });
 
-    const getCart = async () => {
-        try {
-            const response: AxiosResponse = await getUserCart();
-            const data: ApiResponse<Cart> = response.data;
-            console.log("fetched Cart data", data.data);
-            dispatch(setCart(data.data));
+    // const getCart = async () => {
+    //     try {
+    //         const response: AxiosResponse = await getUserCart();
+    //         const data: ApiResponse<Cart> = response.data;
+    //         console.log("fetched Cart data", data.data);
 
-        } catch (error) {
-            console.error(error);
+    //     } catch (error) {
+    //         console.error(error);
 
-        }
-    }
+    //     }
+    // }
     const handleFormSubmit = async (loginData: LoginFormData) => {
         console.log(loginData);
 
@@ -59,7 +56,7 @@ const Login = () => {
             const { data: user } = response.data;
             console.log("user :", user);
             dispatch(setUser(user));
-            getCart();
+            // getCart();
 
         }
         catch (e: unknown) {

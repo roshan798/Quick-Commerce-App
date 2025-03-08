@@ -10,9 +10,10 @@ const initialState: CartState = {
 
 const updateTotalPrice = (state: CartState) => {
     if (state.cart) {
-        state.cart.totalPrice = state.cart.cartItems.reduce((total, item) => {
-            return total + (item.price * item.quantity);
-        }, 0);
+        state.cart = {
+            ...state.cart,
+            totalPrice: state.cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+        };
     }
 };
 
@@ -25,30 +26,38 @@ const cartSlice = createSlice({
             updateTotalPrice(state);
         },
         addAProduct: (state, action: PayloadAction<CartItem>) => {
-            state.cart?.cartItems.push(action.payload);
-            updateTotalPrice(state);
+            if (state.cart) {
+                state.cart = {
+                    ...state.cart,
+                    cartItems: [...state.cart.cartItems, action.payload]
+                };
+                updateTotalPrice(state);
+            }
         },
         increaseQuantity: (state, action: PayloadAction<number>) => {
             if (state.cart) {
-                const cartItem = state.cart.cartItems.find(item => item.productId === action.payload);
-                if (cartItem) {
-                    cartItem.quantity++;
-                    updateTotalPrice(state);
-                }
+                state.cart = {
+                    ...state.cart,
+                    cartItems: state.cart.cartItems.map(item =>
+                        item.productId === action.payload ? { ...item, quantity: item.quantity + 1 } : item
+                    )
+                };
+                updateTotalPrice(state);
             }
         },
         decreaseQuantity: (state, action: PayloadAction<number>) => {
             if (state.cart) {
-                const cartIndex = state.cart.cartItems.findIndex(item => item.productId === action.payload);
-                if (cartIndex !== -1) {
-                    const cartItem = state.cart.cartItems[cartIndex];
-                    if (cartItem.quantity > 1) {
-                        cartItem.quantity--;
-                    } else {
-                        state.cart.cartItems.splice(cartIndex, 1);
-                    }
-                    updateTotalPrice(state);
-                }
+                state.cart = {
+                    ...state.cart,
+                    cartItems: state.cart.cartItems
+                        .map(item =>
+                            item.productId === action.payload 
+                                ? { ...item, quantity: item.quantity - 1 }
+                                : item
+                        )
+                        .filter(item => item.quantity > 0)
+                };
+                updateTotalPrice(state);
             }
         },
         clearCart: (state) => {
@@ -57,8 +66,6 @@ const cartSlice = createSlice({
     },
 });
 const { setCart, increaseQuantity, decreaseQuantity, clearCart, addAProduct } = cartSlice.actions;
-
-
 
 export const fetchCart = () => async (dispatch: AppDispatch) => {
     try {
@@ -73,11 +80,13 @@ export const addProductToCart = (productId: number) => async (dispatch: AppDispa
     try {
         const res = await addToCart(productId);
         const data: ApiResponse<Cart> = res.data;
-        const addedProduct = data.data.cartItems.find(a => a.productId == productId);
-
-        dispatch(increaseQuantity(productId));
-        if (addedProduct?.quantity === 1) {
-            dispatch(addAProduct(addedProduct));
+        const addedProduct = data.data.cartItems.find(a => a.productId === productId);
+        if (addedProduct) {
+            if (addedProduct.quantity === 1) {
+                dispatch(addAProduct(addedProduct));
+            } else {
+                dispatch(increaseQuantity(productId));
+            }
         }
     } catch (error) {
         console.error("Error adding product to cart:", error);
@@ -101,6 +110,5 @@ export const clearCartItems = () => async (dispatch: AppDispatch) => {
         console.error("Error clearing cart:", error);
     }
 };
-
-// Export actions and reducer
+export { clearCart };
 export default cartSlice.reducer;

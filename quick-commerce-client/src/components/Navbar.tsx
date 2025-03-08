@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/types";
 import { logoutUser } from "../store/user.slice"
 import { logout } from "../http/auth";
-import { setCart } from "../store/cart.slice";
+import { clearCart } from "../store/cart.slice";
 const Navbar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -12,11 +12,12 @@ const Navbar = () => {
   const user = useSelector((state: RootState) => state?.auth.user);
   const isUserLoggedIn = Boolean(user != null && user != undefined);
   const cart = useSelector((state: RootState) => state.cart.cart);
+
   const handleLogoutClick = async () => {
     try {
       await logout();
       dispatch(logoutUser());
-      dispatch(setCart(null))
+      dispatch(clearCart())
       navigate("/login")
     } catch (error) {
       console.log(error);
@@ -53,7 +54,6 @@ const Navbar = () => {
                   Logout
                 </Button>
                 <div>Cart : {cart === null ? 0 : cart?.cartItems?.length}</div>
-
               </div>
             }
           </div>

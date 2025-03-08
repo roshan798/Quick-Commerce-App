@@ -15,7 +15,6 @@ export function useLoadingWithRefresh() {
                 const response: AxiosResponse = await refresh();
                 const { data: user }: { data: User } = response.data
                 dispatch(setUser(user))
-                console.log("useLoadingWithRefresh", user);
                 setLoading(false)
             } catch (error) {
                 console.error('Error fetching refresh token:', error)
