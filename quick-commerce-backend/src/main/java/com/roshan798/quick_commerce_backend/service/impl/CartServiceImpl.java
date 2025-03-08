@@ -48,86 +48,94 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public Cart addProductToCart(long productId, int quantity, String userEmail) {
-		log.info("Adding product {} (quantity: {}) to cart for user: {}", productId, quantity, userEmail);
-		User user = userService.getUserByEmail(userEmail);
-		Cart cart = cartRepo.findByUser(user).orElseGet(() -> {
-			log.info("Cart not found for user: {}. Creating a new cart.", userEmail);
-			Cart newCart = Cart.builder().user(user).cartItems(new ArrayList<>()).build();
-			return cartRepo.save(newCart);
-		});
+	public Cart updateCartItemQuantity(long productId, String userEmail, String operationType) {
+
+		log.info("Adding product {}  to cart for user: {}", productId, userEmail);
+
+		Cart cart = this.getUserCart(userEmail);
 
 		Optional<CartItem> existingItem = cart.getCartItems().stream()
 				.filter(item -> item.getProduct().getId().equals(productId)).findFirst();
-		if (quantity < 0) {
-			quantity = -quantity;
-		}
+		// TODO
+		// when adding a product to cart so check the availablility first
+
 		if (existingItem.isPresent()) {
 			log.info("Product {} already exists in cart. Updating quantity.", productId);
-			existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
+			if (operationType.equals("ADD")) {
+				existingItem.get().setQuantity(existingItem.get().getQuantity() + 1); // adding one
+			} else if (operationType.equals("REMOVE")) {
+				existingItem.get().setQuantity(existingItem.get().getQuantity() - 1); // removing one
+				if (existingItem.get().getQuantity() == 0) {
+					// remove the item from the cart
+					cart.getCartItems().remove(existingItem.get());
+					log.info("REMOVE THE ITEM FROM THE CART");
+				}
+			}
 		} else {
 			log.info("Product {} not found in cart. Adding new item.", productId);
-			Product product = productService.getProductById(productId);
-			CartItem newItem = CartItem.builder().cart(cart).product(product).quantity(quantity).build();
-			cart.getCartItems().add(newItem);
+			if (operationType.equals("ADD")) {
+				Product product = productService.getProductById(productId);
+				CartItem newItem = CartItem.builder().cart(cart).product(product).quantity(1).build();
+				cart.getCartItems().add(newItem);
+			}
 		}
 		Cart updatedCart = cartRepo.save(cart);
 		log.info("Cart updated successfully for user: {}", userEmail);
 		return updatedCart;
 	}
 
-	@Override
-	public void updateCartItemQuantity(Long cartItemId, Integer quantity, String loggedInUserEmail) {
-		log.info("Updating quantity of cart item {} to {}", cartItemId, quantity);
+//	@Override
+//	public void updateCartItemQuantity(Long cartItemId, Integer quantity, String loggedInUserEmail) {
+//		log.info("Updating quantity of cart item {} to {}", cartItemId, quantity);
+//
+//		// change type of exception
+//		CartItem cartItem = cartItemRepo.findById(cartItemId)
+//				.orElseThrow(() -> new RuntimeException("Cart item not found"));
+//
+//		// Validate that the cart item belongs to the logged-in user
+//		User user = cartItem.getCart().getUser();
+////	    String loggedInUserEmail = userService.getAuthenticatedUserEmail();
+//		if (!user.getEmail().equals(loggedInUserEmail)) {
+//			throw new RuntimeException("Unauthorized to modify this cart item");
+//		}
+//
+//		// If quantity is 0 or negative, remove the item from the cart
+//		if (quantity < 1) {
+//			log.info("Quantity is {}. Removing cart item {}", quantity, cartItemId);
+//			cartItem.getCart().getCartItems().remove(cartItem);
+//			cartRepo.save(cartItem.getCart());
+//			return;
+//		}
+//
+//		// TODO: Check if the requested quantity is within stock limits in the users
+//		// specific area or pincode
+//
+//		// Update the quantity
+//		cartItem.setQuantity(quantity);
+//		cartRepo.save(cartItem.getCart());
+//
+//		log.info("Cart item {} updated successfully to quantity {}", cartItemId, quantity);
+//	}
 
-		// change type of exception
-		CartItem cartItem = cartItemRepo.findById(cartItemId)
-				.orElseThrow(() -> new RuntimeException("Cart item not found"));
-
-		// Validate that the cart item belongs to the logged-in user
-		User user = cartItem.getCart().getUser();
-//	    String loggedInUserEmail = userService.getAuthenticatedUserEmail();
-		if (!user.getEmail().equals(loggedInUserEmail)) {
-			throw new RuntimeException("Unauthorized to modify this cart item");
-		}
-
-		// If quantity is 0 or negative, remove the item from the cart
-		if (quantity < 1) {
-			log.info("Quantity is {}. Removing cart item {}", quantity, cartItemId);
-			cartItem.getCart().getCartItems().remove(cartItem);
-			cartRepo.save(cartItem.getCart());
-			return;
-		}
-
-		// TODO: Check if the requested quantity is within stock limits in the users
-		// specific area or pincode
-
-		// Update the quantity
-		cartItem.setQuantity(quantity);
-		cartRepo.save(cartItem.getCart());
-
-		log.info("Cart item {} updated successfully to quantity {}", cartItemId, quantity);
-	}
-
-	@Override
-	public void removeProductFromCart(Long cartItemId, String userEmail) {
-		log.info("Removing product from cart. CartItem ID: {}, User: {}", cartItemId, userEmail);
-
-		CartItem cartItem = cartItemRepo.findById(cartItemId)
-				.orElseThrow(() -> new RuntimeException("Cart item not found"));
-
-		User user = cartItem.getCart().getUser();
-		if (!user.getEmail().equals(userEmail)) {
-			throw new RuntimeException("Unauthorized to remove this cart item");
-		}
-
-		Cart cart = cartItem.getCart();
-		cart.getCartItems().remove(cartItem);
-		cartRepo.save(cart);
-		cartItemRepo.delete(cartItem);
-
-		log.info("Cart item {} removed successfully for user {}", cartItemId, userEmail);
-	}
+//	@Override
+//	public void removeProductFromCart(Long cartItemId, String userEmail) {
+//		log.info("Removing product from cart. CartItem ID: {}, User: {}", cartItemId, userEmail);
+//
+//		CartItem cartItem = cartItemRepo.findById(cartItemId)
+//				.orElseThrow(() -> new RuntimeException("Cart item not found"));
+//
+//		User user = cartItem.getCart().getUser();
+//		if (!user.getEmail().equals(userEmail)) {
+//			throw new RuntimeException("Unauthorized to remove this cart item");
+//		}
+//
+//		Cart cart = cartItem.getCart();
+//		cart.getCartItems().remove(cartItem);
+//		cartRepo.save(cart);
+//		cartItemRepo.delete(cartItem);
+//
+//		log.info("Cart item {} removed successfully for user {}", cartItemId, userEmail);
+//	}
 
 	@Override
 	public void clearCart(String userEmail) {

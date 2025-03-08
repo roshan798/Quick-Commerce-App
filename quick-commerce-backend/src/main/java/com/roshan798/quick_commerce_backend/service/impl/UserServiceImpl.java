@@ -10,6 +10,7 @@ import com.roshan798.quick_commerce_backend.models.User;
 import com.roshan798.quick_commerce_backend.repository.UserRepo;
 import com.roshan798.quick_commerce_backend.service.UserService;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public User getUserByEmail(String email) {
 		log.info("Fetching user by Email: {}", email);
 		return repo.findByEmailAndEnabledTrue(email).orElseThrow(() -> {

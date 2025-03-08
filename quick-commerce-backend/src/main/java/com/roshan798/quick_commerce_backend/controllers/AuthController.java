@@ -33,7 +33,7 @@ public class AuthController {
 	@PostMapping("/signup")
 	protected ResponseEntity<ResponseDTO<UserDTO>> register(@RequestBody UserRegisterDTO userData) {
 		log.info("Entering register");
-		userData.setRole(Role.CUSTOMER);
+		userData.setRole(Role.ROLE_CUSTOMER);
 		User newUser = authService.register(userData);
 		ResponseDTO<UserDTO> response = new ResponseDTO<>(true, "User registered successfully", new UserDTO(newUser));
 		log.info("Exit register");

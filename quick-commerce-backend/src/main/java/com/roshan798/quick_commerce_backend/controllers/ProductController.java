@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +33,7 @@ public class ProductController {
 	@Autowired
 	private ProductService service;
 
-	// @PreAuthorize("hasRole('ADMIN')") // Uncomment when role-based access is
-	// added
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<ResponseDTO<ProductDTO>> createProduct(@RequestBody ProductDTO product) {
 		log.info("Entering createProduct with request body: {}", product);
@@ -58,6 +58,7 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<ResponseDTO<ProductDTO>> updateProductById(@PathVariable Long id,
 			@RequestBody ProductDTO product) {
@@ -71,6 +72,7 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ResponseDTO<Void>> deleteProductById(@PathVariable Long id) {
 		log.info("Entering deleteProductById with ID: {}", id);
