@@ -12,6 +12,8 @@ import PublicRoute from './routes/PublicRoutes';
 import { useLoadingWithRefresh } from './hooks/useLoadingwithRefresh';
 import { fetchCart } from './store/cart.slice';
 import { useAppDispatch } from './store';
+import AdminRoute from './routes/AdminRoutes';
+import { Dashboard } from './pages/admin/Dasboard';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/user/Login'));
 const Signup = lazy(() => import('./pages/user/Signup'));
@@ -24,6 +26,7 @@ function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchCart());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -34,6 +37,9 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
+          </Route>
+          <Route element={<AdminRoute />}>
+            <Route path="/admin/dashboard" element={<Dashboard />} />
           </Route>
           <Route element={<PublicRoute />}>
             <Route path="/signup" element={<Signup />} />

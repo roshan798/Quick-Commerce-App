@@ -35,7 +35,7 @@ const ProductCard = ({ product }: ProductCartProps) => {
     return (
         <div className="bg-white p-4 rounded-lg shadow-md text-center">
             <h3 className="text-xl font-semibold">{product.name}</h3>
-            <p className="text-lg text-blue-600 font-bold">${product.price}</p>
+            <p className="text-lg text-blue-600 font-bold">₹{product.price}</p>
 
             {cartItem ? (
                 <div className="flex items-center justify-center mt-3">

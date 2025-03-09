@@ -40,16 +40,15 @@ const Login = () => {
         resolver: zodResolver(loginSchema),
     });
     const handleFormSubmit = async (loginData: LoginFormData) => {
-        console.log(loginData);
+        // console.log(loginData);
 
         try {
             const response: AxiosResponse = await login(loginData as LoginRequest);
-            console.log("response", response);
+            // console.log("response", response);
             const { data: user } = response.data;
             console.log("user :", user);
             dispatch(setUser(user));
             appDispatch(fetchCart());
-
         }
         catch (e: unknown) {
             const error = e as AxiosError;

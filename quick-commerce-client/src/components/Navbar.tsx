@@ -51,16 +51,15 @@ const Navbar = () => {
           )}
           {isUserLoggedIn && (
             <div className="flex items-center gap-4">
-              <Link to="/cart" className="relative">
+              {user && user.role != "ROLE_ADMIN" &&  <Link to="/cart" className="relative">
                 <Button variant="outline" icon={<ShoppingCart size={20} />}>
-                  {/* <span className="ml-2">Cart</span> */}
                   {cart && cart?.cartItems?.length > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                       {cart.cartItems.length}
                     </span>
                   )}
                 </Button>
-              </Link>
+              </Link>}
               <Button variant="outline" icon={ <LogOut size={20} />} onClick={handleLogoutClick}>
                 Logout
               </Button>

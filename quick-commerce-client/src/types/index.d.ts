@@ -1,7 +1,10 @@
+type UserRole = "ROLE_ADMIN" | "ROLE_CUSTOMER" | "ROLE_DELIVERY_PERSON"
+
 export interface User {
     id: number
     name: string
     email: string
+    role : UserRole
     created_at: string
     updated_at: string
 }
