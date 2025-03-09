@@ -2,6 +2,7 @@ package com.roshan798.quick_commerce_backend.models;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,7 +32,6 @@ public class Product {
 	private Long id;
 
 	private String name;
-	private String image;
 	private String description;
 	private Double price;
 
@@ -48,4 +48,11 @@ public class Product {
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Inventory> inventories;
+
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductImage> images;
+
+	public List<String> getImageUrls() {
+		return this.images.stream().map(url -> url.getImageUrl()).collect(Collectors.toList());
+	}
 }

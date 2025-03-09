@@ -1,5 +1,7 @@
 package com.roshan798.quick_commerce_backend.dto.cart;
 
+import java.util.List;
+
 import com.roshan798.quick_commerce_backend.models.CartItem;
 import com.roshan798.quick_commerce_backend.models.Product;
 
@@ -17,7 +19,7 @@ public class CartItemDTO {
 	private Long productId;
 	private Long cartItemId;
 	private String productName;
-	private String productImage;
+	private List<String> productImages;
 	private Integer quantity;
 	private Double price;
 
@@ -26,7 +28,7 @@ public class CartItemDTO {
 		this.cartItemId = cartItem.getId();
 		this.productId = product.getId();
 		this.productName = product.getName();
-		this.productImage = product.getImage();
+		this.productImages = product.getImageUrls();
 		this.quantity = cartItem.getQuantity();
 		this.price = product.getPrice();
 	}
