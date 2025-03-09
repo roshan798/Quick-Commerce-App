@@ -5,8 +5,10 @@ import { getAllProducts } from "../../http/product";
 import { Link } from "react-router-dom";
 import Button from "../../components/shared/Button";
 import { Plus } from "lucide-react";
-
-export const Dashboard = () => {
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const Dashboard = () => {
+    console.log("DASHBOARD");
+    
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
@@ -66,9 +68,9 @@ export const Dashboard = () => {
                                 className="border rounded px-2 py-1 cursor-pointer"
                             >
                                 <option value="6">6</option>
-                                <option value="9">9</option>
                                 <option value="12">12</option>
                                 <option value="15">15</option>
+                                <option value="25">25</option>
                             </select>
                         </div>
                     </div>
@@ -83,14 +85,29 @@ export const Dashboard = () => {
                             {products.length > 0 ? (
                                 products.map((product) => (
                                     <div key={product.productId} className="bg-white p-4 shadow rounded-lg">
+                                        {/* Product Image */}
+                                        {product.images.length > 0 ? (
+                                            <img
+                                                src={BASE_URL + product.images[0]} // Display the first image
+                                                alt={product.name}
+                                                className="w-full h-40 object-contain rounded-lg mb-2"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg mb-2">
+                                                <span className="text-gray-500">No Image Available</span>
+                                            </div>
+                                        )}
+
+                                        {/* Product Details */}
                                         <h3 className="font-semibold text-lg">{product.name}</h3>
                                         <p className="text-gray-500 text-sm">{product.description || "No description available."}</p>
                                         <p className="text-gray-700 font-semibold mt-1">₹{product.price.toFixed(2)}</p>
-                                        <div className="mt-4 flex gap-2 ">
+                                        <div className="mt-4 flex gap-2">
                                             <Button variant="primary">Edit</Button>
                                             <Button variant="danger" onClick={() => handleDelete(product.productId)}>Delete</Button>
                                         </div>
                                     </div>
+
                                 ))
                             ) : (
                                 <p className="text-center text-gray-500 col-span-full">No products available.</p>
@@ -123,3 +140,5 @@ export const Dashboard = () => {
         </div>
     );
 };
+
+export default Dashboard;

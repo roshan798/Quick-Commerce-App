@@ -19,6 +19,7 @@ const Error404 = lazy(() => import('./pages/Error404'));
 import adminPagesData from "./routes/admin"
 import privatePagesData from './routes/private';
 import publicPagesData from './routes/public';
+import AdminSidebar from './components/AdminSidebar';
 
 function App() {
   const { loading } = useLoadingWithRefresh();
@@ -42,7 +43,10 @@ function App() {
           </Route>
           <Route element={<AdminRoute />}>
             {adminPagesData.map((page, index) =>
-              <Route key={index} path={page.path} element={<page.component />} />
+              <Route key={index} path={page.path} element={
+                <AdminSidebar>
+                  <page.component />
+                </AdminSidebar>} />
             )}
           </Route>
           <Route element={<PublicRoute />}>

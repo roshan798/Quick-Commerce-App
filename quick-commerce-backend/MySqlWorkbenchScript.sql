@@ -3,6 +3,8 @@ CREATE DATABASE quick_commerce;
 USE quick_commerce;
 SHOW tables;
 DESCRIBE users;
+desc products;
+desc product_images;
 use quick_commerce;
 desc users;
 desc carts;
@@ -29,16 +31,19 @@ SELECT * FROM orders;
 
 --
 -- Step 1: Create a new column with the correct ENUM values
-ALTER TABLE users ADD COLUMN new_role ENUM('ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_DELIVERY_PERSON') NOT NULL DEFAULT 'CUSTOMER';
+ALTER TABLE users ADD COLUMN new_role ENUM('ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_DELIVERY_PERSON') NOT NULL DEFAULT 'ROLE_CUSTOMER';
 
 -- Step 2: Copy existing values to the new column (Replacing 'USER' with 'CUSTOMER')
--- UPDATE users SET new_role = 'CUSTOMER' WHERE role = 'USER';
--- UPDATE users SET new_role = role WHERE role IN ('ADMIN', 'CUSTOMER', 'DELIVERY_PERSON');
+UPDATE users SET new_role = 'CUSTOMER' WHERE role = 'USER';
+UPDATE users SET new_role = role WHERE role IN ('ADMIN', 'CUSTOMER', 'DELIVERY_PERSON');
 
 -- Step 3: Drop the old column
--- ALTER TABLE users DROP COLUMN role;
+ALTER TABLE users DROP COLUMN role;
 
 -- Step 4: Rename the new column to 'role'
--- ALTER TABLE users CHANGE new_role role ENUM('ADMIN', 'CUSTOMER', 'DELIVERY_PERSON') NOT NULL;
+ALTER TABLE users CHANGE new_role role ENUM('ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_DELIVERY_PERSON') NOT NULL;
 
 --
+-- dropping image colum from products
+ALTER TABLE Products
+DROP COLUMN image;

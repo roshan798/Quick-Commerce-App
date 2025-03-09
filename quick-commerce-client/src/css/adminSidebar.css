@@ -1,0 +1,20 @@
+.sidebar {
+    transition: width 0.3s ease-in-out;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed {
+    width: 4rem; /* 16px */
+}
+
+.sidebar h2,
+.sidebar nav a span {
+    transition: opacity 0.2s ease-in-out 0.1s;
+}
+
+.sidebar.collapsed h2,
+.sidebar.collapsed nav a span {
+    opacity: 0;
+    pointer-events: none;
+}

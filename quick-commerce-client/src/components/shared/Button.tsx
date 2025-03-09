@@ -11,7 +11,7 @@ type Variant =
     | `outline-${"primary" | "secondary" | "danger" | "success" | "warning"}`;
 
 type ButtonProps = {
-    children: React.ReactNode;
+    children ?: React.ReactNode;
     variant?: Variant;
     className?: string;
     icon?: React.ReactNode;
