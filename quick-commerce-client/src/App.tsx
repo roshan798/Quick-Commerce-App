@@ -13,12 +13,12 @@ import { useLoadingWithRefresh } from './hooks/useLoadingwithRefresh';
 import { fetchCart } from './store/cart.slice';
 import { useAppDispatch } from './store';
 import AdminRoute from './routes/AdminRoutes';
-import { Dashboard } from './pages/admin/Dasboard';
-const Home = lazy(() => import('./pages/Home'));
-const Login = lazy(() => import('./pages/user/Login'));
-const Signup = lazy(() => import('./pages/user/Signup'));
-const Cart = lazy(() => import('./pages/user/Cart'));
+
 const Error404 = lazy(() => import('./pages/Error404'));
+
+import adminPagesData from "./routes/admin"
+import privatePagesData from './routes/private';
+import publicPagesData from './routes/public';
 
 function App() {
   const { loading } = useLoadingWithRefresh();
@@ -26,7 +26,7 @@ function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchCart());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -35,15 +35,21 @@ function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/cart" element={<Cart />} />
+
+            {privatePagesData.map((page, index) =>
+              <Route key={index} path={page.path} element={<page.component />} />
+            )}
           </Route>
           <Route element={<AdminRoute />}>
-            <Route path="/admin/dashboard" element={<Dashboard />} />
+            {adminPagesData.map((page, index) =>
+              <Route key={index} path={page.path} element={<page.component />} />
+            )}
           </Route>
           <Route element={<PublicRoute />}>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            {publicPagesData.map((page, index) =>
+              <Route key={index} path={page.path} element={<page.component />} />
+            )}
+
           </Route>
           <Route path="*" element={<Error404 />} />
         </Routes>
