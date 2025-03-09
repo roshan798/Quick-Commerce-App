@@ -12,7 +12,7 @@ const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
-    const [size, setSize] = useState<number>(6);
+    const [size] = useState<number>(6);
     const [totalPages, setTotalPages] = useState<number>(1);
 
     useEffect(() => {
@@ -84,8 +84,10 @@ const Products = () => {
                                             <td className="">{""}</td>
                                             <td className="">
                                                 <div className="flex justify-center gap-1.5">
-                                                    <Button variant="primary"  icon={<Edit size={16} />}/>
-                                                    <Button variant="danger" onClick={() => handleDelete(product.productId)} icon={<Trash2 size={16} />}/>
+                                                <Link to={`/admin/add-or-update-product/${product.productId}`}>
+                                                    <Button variant="primary" icon={<Edit size={16} />}/>
+                                                        </Link>
+                                                    <Button variant="danger" onClick={() => handleDelete(product.productId)} icon={<Trash2 size={16} />} />
                                                 </div>
                                             </td>
                                         </tr>

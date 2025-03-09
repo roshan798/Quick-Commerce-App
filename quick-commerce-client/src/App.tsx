@@ -25,35 +25,43 @@ function App() {
   const { loading } = useLoadingWithRefresh();
   console.log('loading', loading);
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(fetchCart());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
+
+  if (loading) {
+    return <div className="loading-screen">Loading...</div>;
+  }
 
   return (
     <>
       <Navbar />
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          <Route element={<PrivateRoute />}>
-
-            {privatePagesData.map((page, index) =>
-              <Route key={index} path={page.path} element={<page.component />} />
-            )}
-          </Route>
           <Route element={<AdminRoute />}>
-            {adminPagesData.map((page, index) =>
-              <Route key={index} path={page.path} element={
-                <AdminSidebar>
-                  <page.component />
-                </AdminSidebar>} />
-            )}
+            {adminPagesData.map((page, index) => (
+              <Route
+                key={index}
+                path={page.path}
+                element={
+                  <AdminSidebar>
+                    <page.component />
+                  </AdminSidebar>
+                }
+              />
+            ))}
+          </Route>
+          <Route element={<PrivateRoute />}>
+            {privatePagesData.map((page, index) => (
+              <Route key={index} path={page.path} element={<page.component />} />
+            ))}
           </Route>
           <Route element={<PublicRoute />}>
-            {publicPagesData.map((page, index) =>
+            {publicPagesData.map((page, index) => (
               <Route key={index} path={page.path} element={<page.component />} />
-            )}
-
+            ))}
           </Route>
           <Route path="*" element={<Error404 />} />
         </Routes>
@@ -62,5 +70,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;

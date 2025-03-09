@@ -7,10 +7,9 @@ export default function AdminRoute() {
     
     const user = useSelector((state: RootState) => state.auth.user)
 
-    if (user === null || user === undefined) {
+    if (user === null || user === undefined || user.role !== "ROLE_ADMIN") {
+        console.log("navigate to login from admin");
         return <Navigate to="/login" />
-    } else if (user.role !== "ROLE_ADMIN") {
-        <Navigate to="/login" />
-    }
+    } 
     return <Outlet />
 }
