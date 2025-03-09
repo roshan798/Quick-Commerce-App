@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../store";
-import { addProductToCart, removeProductFromCart } from "../store/cart.slice";
+import { increaseProductQuantity, decreaseProductQuantity } from "../store/cart.slice";
 import { Product } from "../types";
 
 type ProductCartProps = {
@@ -15,7 +15,7 @@ const ProductCard = ({ product }: ProductCartProps) => {
     const cartItem = cart?.cartItems?.find(item => item.productId === product.productId);
     const handleIncrease = async () => {
         try {
-            dispatch(addProductToCart(product.productId))
+            dispatch(increaseProductQuantity(product.productId))
         } catch (error) {
             console.error("Error updating quantity:", error);
         }
@@ -25,7 +25,7 @@ const ProductCard = ({ product }: ProductCartProps) => {
     const handleDecrease = () => {
         if (cartItem) {
             try {
-                dispatch(removeProductFromCart(product.productId));
+                dispatch(decreaseProductQuantity(product.productId));
             } catch (error) {
                 console.error("Error removing quantity:", error);
             }

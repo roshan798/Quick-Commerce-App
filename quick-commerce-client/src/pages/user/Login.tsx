@@ -10,12 +10,15 @@ import { LoginRequest } from "../../types/auth";
 import { AxiosError, AxiosResponse } from "axios";
 import { setUser } from "../../store/user.slice";
 import { useDispatch } from 'react-redux'
+import { useAppDispatch } from "../../store";
+import { fetchCart } from "../../store/cart.slice";
 
 
 // Define the validation schema
 const loginSchema = z.object({
     email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(3, "Password must be at least 3 characters"),
+    // password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 // Type inference from Zod schema
@@ -23,6 +26,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
     const dispatch = useDispatch()
+    const appDispatch = useAppDispatch();
     // const [error, setError] = useState<string | null>(null);
     // const [success, setSuccess] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -35,18 +39,6 @@ const Login = () => {
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
     });
-
-    // const getCart = async () => {
-    //     try {
-    //         const response: AxiosResponse = await getUserCart();
-    //         const data: ApiResponse<Cart> = response.data;
-    //         console.log("fetched Cart data", data.data);
-
-    //     } catch (error) {
-    //         console.error(error);
-
-    //     }
-    // }
     const handleFormSubmit = async (loginData: LoginFormData) => {
         console.log(loginData);
 
@@ -56,7 +48,7 @@ const Login = () => {
             const { data: user } = response.data;
             console.log("user :", user);
             dispatch(setUser(user));
-            // getCart();
+            appDispatch(fetchCart());
 
         }
         catch (e: unknown) {

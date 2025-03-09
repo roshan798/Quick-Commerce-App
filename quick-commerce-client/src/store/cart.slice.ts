@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartState } from "./types";
 import { ApiResponse, Cart, CartItem } from "../types";
-import { addToCart, removeFromCart, getUserCart, clearUserCart } from "../http/cart";
+import { addToCart, removeFromCart, getUserCart, clearUserCart, removeItemFromCart } from "../http/cart";
 import { AppDispatch } from "../store";
 
 const initialState: CartState = {
@@ -51,7 +51,7 @@ const cartSlice = createSlice({
                     ...state.cart,
                     cartItems: state.cart.cartItems
                         .map(item =>
-                            item.productId === action.payload 
+                            item.productId === action.payload
                                 ? { ...item, quantity: item.quantity - 1 }
                                 : item
                         )
@@ -60,12 +60,21 @@ const cartSlice = createSlice({
                 updateTotalPrice(state);
             }
         },
+        removeProductFromCartStore: (state, action: PayloadAction<number>) => {
+            if (state.cart) {
+                state.cart = {
+                    ...state.cart,
+                    cartItems: state.cart.cartItems.filter(a => a.productId != action.payload)
+                }
+                updateTotalPrice(state);
+            }
+        },
         clearCart: (state) => {
             state.cart = null;
         },
     },
 });
-const { setCart, increaseQuantity, decreaseQuantity, clearCart, addAProduct } = cartSlice.actions;
+const { setCart, increaseQuantity, decreaseQuantity, clearCart, addAProduct,removeProductFromCartStore } = cartSlice.actions;
 
 export const fetchCart = () => async (dispatch: AppDispatch) => {
     try {
@@ -76,7 +85,7 @@ export const fetchCart = () => async (dispatch: AppDispatch) => {
     }
 };
 
-export const addProductToCart = (productId: number) => async (dispatch: AppDispatch) => {
+export const increaseProductQuantity = (productId: number) => async (dispatch: AppDispatch) => {
     try {
         const res = await addToCart(productId);
         const data: ApiResponse<Cart> = res.data;
@@ -93,7 +102,7 @@ export const addProductToCart = (productId: number) => async (dispatch: AppDispa
     }
 };
 
-export const removeProductFromCart = (productId: number) => async (dispatch: AppDispatch) => {
+export const decreaseProductQuantity = (productId: number) => async (dispatch: AppDispatch) => {
     try {
         await removeFromCart(productId);
         dispatch(decreaseQuantity(productId));
@@ -101,6 +110,15 @@ export const removeProductFromCart = (productId: number) => async (dispatch: App
         console.error("Error removing product from cart:", error);
     }
 };
+export const removeProductFromCart = (productId: number) => async (dispatch: AppDispatch) => {
+    try {
+        await removeItemFromCart(productId);
+        dispatch(removeProductFromCartStore(productId))
+
+    } catch (error) {
+        console.error("Error removing product from cart:", error);
+    }
+}
 
 export const clearCartItems = () => async (dispatch: AppDispatch) => {
     try {

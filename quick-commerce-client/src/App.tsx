@@ -15,6 +15,7 @@ import { useAppDispatch } from './store';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/user/Login'));
 const Signup = lazy(() => import('./pages/user/Signup'));
+const Cart = lazy(() => import('./pages/user/Cart'));
 const Error404 = lazy(() => import('./pages/Error404'));
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Routes>
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
+            <Route path="/cart" element={<Cart />} />
           </Route>
           <Route element={<PublicRoute />}>
             <Route path="/signup" element={<Signup />} />
