@@ -84,58 +84,23 @@ public class CartServiceImpl implements CartService {
 		return updatedCart;
 	}
 
-//	@Override
-//	public void updateCartItemQuantity(Long cartItemId, Integer quantity, String loggedInUserEmail) {
-//		log.info("Updating quantity of cart item {} to {}", cartItemId, quantity);
-//
-//		// change type of exception
-//		CartItem cartItem = cartItemRepo.findById(cartItemId)
-//				.orElseThrow(() -> new RuntimeException("Cart item not found"));
-//
-//		// Validate that the cart item belongs to the logged-in user
-//		User user = cartItem.getCart().getUser();
-////	    String loggedInUserEmail = userService.getAuthenticatedUserEmail();
-//		if (!user.getEmail().equals(loggedInUserEmail)) {
-//			throw new RuntimeException("Unauthorized to modify this cart item");
-//		}
-//
-//		// If quantity is 0 or negative, remove the item from the cart
-//		if (quantity < 1) {
-//			log.info("Quantity is {}. Removing cart item {}", quantity, cartItemId);
-//			cartItem.getCart().getCartItems().remove(cartItem);
-//			cartRepo.save(cartItem.getCart());
-//			return;
-//		}
-//
-//		// TODO: Check if the requested quantity is within stock limits in the users
-//		// specific area or pincode
-//
-//		// Update the quantity
-//		cartItem.setQuantity(quantity);
-//		cartRepo.save(cartItem.getCart());
-//
-//		log.info("Cart item {} updated successfully to quantity {}", cartItemId, quantity);
-//	}
+	@Override
+	public Cart removeProductFromCart(Long productId, String userEmail) {
+		log.info("Removing product {} from cart for user {}", productId, userEmail);
 
-//	@Override
-//	public void removeProductFromCart(Long cartItemId, String userEmail) {
-//		log.info("Removing product from cart. CartItem ID: {}, User: {}", cartItemId, userEmail);
-//
-//		CartItem cartItem = cartItemRepo.findById(cartItemId)
-//				.orElseThrow(() -> new RuntimeException("Cart item not found"));
-//
-//		User user = cartItem.getCart().getUser();
-//		if (!user.getEmail().equals(userEmail)) {
-//			throw new RuntimeException("Unauthorized to remove this cart item");
-//		}
-//
-//		Cart cart = cartItem.getCart();
-//		cart.getCartItems().remove(cartItem);
-//		cartRepo.save(cart);
-//		cartItemRepo.delete(cartItem);
-//
-//		log.info("Cart item {} removed successfully for user {}", cartItemId, userEmail);
-//	}
+		User user = userService.getUserByEmail(userEmail);
+		Cart cart = this.getUserCart(userEmail);
+
+		boolean removed = cart.getCartItems().removeIf(item -> item.getProduct().getId().equals(productId));
+
+		if (removed) {
+			log.info("Product {} removed from cart for user {}", productId, userEmail);
+		} else {
+			log.warn("Product {} not found in cart for user {}", productId, userEmail);
+		}
+
+		return cartRepo.save(cart);
+	}
 
 	@Override
 	public void clearCart(String userEmail) {
