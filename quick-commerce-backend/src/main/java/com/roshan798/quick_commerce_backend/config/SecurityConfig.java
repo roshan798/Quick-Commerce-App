@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,12 +36,14 @@ public class SecurityConfig {
 		http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF since we use JWT
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No
 																												// sessions
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/**").permitAll() // Allow
-						.anyRequest().authenticated() // Require authentication for all other requests
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/**").permitAll() // Public auth
+						// endpoints
+						.requestMatchers(HttpMethod.GET, "/api/v1/images/**").permitAll() // Allow public access to
+																							// images
+						.anyRequest().authenticated() // Require authentication for everything else
 				).cors(cors -> cors.configurationSource(request -> {
 					CorsConfiguration config = new CorsConfiguration();
-					config.setAllowedOriginPatterns(List.of("*")); // Use this instead of setAllowedOrigins('client
-																	// url')
+					config.setAllowedOriginPatterns(List.of("*")); // Allow all origins
 					config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 					config.setAllowedHeaders(List.of("*")); // Allow all headers
 					config.setAllowCredentials(true); // Allow cookies or Authorization header
