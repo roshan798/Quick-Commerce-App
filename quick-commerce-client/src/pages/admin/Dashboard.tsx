@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { PaginatedApiResponse, Product } from "../../types";
-import { getAllProducts } from "../../http/product";
+import { deleteProductById, getAllProducts } from "../../http/product";
 import { Link } from "react-router-dom";
 import Button from "../../components/shared/Button";
 import { Plus } from "lucide-react";
@@ -36,7 +36,7 @@ const Dashboard = () => {
         if (!confirm("Are you sure you want to delete this product?")) return;
 
         try {
-            // implement delete function
+            await deleteProductById(productId)
             setProducts((prev) => prev.filter((product) => product.productId !== productId));
         } catch (error) {
             console.error("Error deleting product:", error);
@@ -86,7 +86,7 @@ const Dashboard = () => {
                                 products.map((product) => (
                                     <div key={product.productId} className="bg-white p-4 shadow rounded-lg">
                                         {/* Product Image */}
-                                        {product.images.length > 0 ? (
+                                        {product.images && product.images.length > 0 ? (
                                             <img
                                                 src={BASE_URL + product.images[0]} // Display the first image
                                                 alt={product.name}

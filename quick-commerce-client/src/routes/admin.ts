@@ -15,7 +15,7 @@ const pagesData: PagesData[] = [
     {
         path: "/admin/add-product",
         name: "Add Product",
-        component: lazy(() => import("../pages/admin/AddProduct")),
+        component: lazy(() => import("../pages/admin/AddOrUpdateProduct")),
     },
     {
         path: "/admin/products",

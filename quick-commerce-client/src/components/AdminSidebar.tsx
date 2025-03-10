@@ -4,7 +4,7 @@ import { useState } from "react";
 import "../css/adminSidebar.css"; 
 
 const AdminSidebar = ({ children }: { children: React.ReactNode }) => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
 
     return (
         <div className="flex">
@@ -44,7 +44,7 @@ const AdminSidebar = ({ children }: { children: React.ReactNode }) => {
             </aside>
 
             {/* Admin Page Content */}
-            <main className="flex-1 p-6 bg-gray-100 overflow-auto">{children}</main>
+            <main className="flex-1 bg-gray-100 overflow-auto">{children}</main>
         </div>
     );
 };

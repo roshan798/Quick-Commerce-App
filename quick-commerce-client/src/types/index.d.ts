@@ -29,7 +29,7 @@ export interface Product {
     productId: number
     name: string
     description: string
-    images: string[]
+    images :? string[]
     price: number
     updatedAt: string
     createdAt: string
