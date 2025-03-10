@@ -10,7 +10,7 @@ public interface ProductService {
 
 	Product getProductById(Long id);
 
-	Page<Product> getProducts(int page, int size, String orderBy);
+	Page<Product> getProducts(int page, int size, String orderBy, String direction);
 
 	boolean deleteProductById(Long id);
 

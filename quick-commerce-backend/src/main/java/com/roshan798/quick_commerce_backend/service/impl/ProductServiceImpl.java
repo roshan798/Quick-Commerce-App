@@ -50,26 +50,32 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Page<Product> getProducts(int page, int size, String orderBy) {
-		log.info("Fetching products with page: {}, size: {}, orderBy: {}", page, size, orderBy);
+	public Page<Product> getProducts(int page, int size, String orderBy, String direction) {
+		log.info("Fetching products with page: {}, size: {}, orderBy: {}, direction: {}", page, size, orderBy,
+				direction);
 
-		// converts negative page number to positive
+		// Convert negative page number to positive
 		if (page < 1) {
 			page = 1;
 		}
-		// page - 1 // since using 1 based indexing for page
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(orderBy));
+
+		// Determine sort direction (default to ASC)
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+		if ("desc".equalsIgnoreCase(direction)) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		// Create pageable with sorting
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(sortDirection, orderBy));
 		Page<Product> products = repo.findAll(pageable);
 
-		// incase of invalid page number]
+		// Handle invalid page number
 		if (page > products.getTotalPages() && products.getTotalPages() > 0) {
-			pageable = PageRequest.of(products.getTotalPages() - 1, size, Sort.by(orderBy));
+			pageable = PageRequest.of(products.getTotalPages() - 1, size, Sort.by(sortDirection, orderBy));
 			products = repo.findAll(pageable);
 		}
 
-		log.info("products : {}", products);
 		log.info("Products fetched successfully: {} records found", products.getTotalElements());
-
 		return products;
 	}
 

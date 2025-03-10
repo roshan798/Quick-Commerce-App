@@ -53,6 +53,9 @@ public class Product {
 	private List<ProductImage> images;
 
 	public List<String> getImageUrls() {
+		if (this.images == null || this.images.size() == 0) {
+			return null;
+		}
 		return this.images.stream().map(url -> url.getImageUrl()).collect(Collectors.toList());
 	}
 }

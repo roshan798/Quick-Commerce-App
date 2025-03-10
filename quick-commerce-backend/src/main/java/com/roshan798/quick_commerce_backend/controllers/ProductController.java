@@ -84,11 +84,14 @@ public class ProductController {
 
 	@GetMapping
 	public ResponseEntity<PaginatedResponseDTO<ProductDTO>> getProducts(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "name") String orderBy) {
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "updatedAt-desc") String orderBy) {
 
 		log.info("Fetching products - Page: {}, Size: {}, OrderBy: {}", page, size, orderBy);
-
-		Page<Product> productPage = service.getProducts(page, size, orderBy);
+		String order[] = orderBy.split("-");
+		String sortingOrder = order[0];
+		String sortingDir = orderBy.length() > 1 ? order[1] : "asc";
+		Page<Product> productPage = service.getProducts(page, size, sortingOrder, sortingDir);
 
 		List<ProductDTO> productDTOs = productPage.getContent().stream().map(ProductDTO::new).toList();
 
