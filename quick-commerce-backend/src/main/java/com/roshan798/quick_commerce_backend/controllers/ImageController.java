@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -22,14 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.roshan798.quick_commerce_backend.dto.ResponseDTO;
+import com.roshan798.quick_commerce_backend.dto.image.ImageUploadResultDTO;
 import com.roshan798.quick_commerce_backend.service.ImageService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/images")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("api/v1/images")
 @Slf4j
+@Lazy
 public class ImageController {
 	private static final String IMAGE_DIR = "src/main/resources/static/images/";
 
@@ -39,13 +41,15 @@ public class ImageController {
 		this.imageService = imageService;
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/upload/{productId}")
-	public ResponseEntity<ResponseDTO<List<String>>> uploadImage(@RequestParam MultipartFile[] files,
+	public ResponseEntity<ResponseDTO<List<ImageUploadResultDTO>>> uploadImage(@RequestParam MultipartFile[] files,
 			@PathVariable Long productId) {
 		log.info("Uploading image for product ID: {}", productId);
 		try {
-			List<String> imageUrls = imageService.uploadImages(files, productId);
-			ResponseDTO<List<String>> response = new ResponseDTO<>(true, "Image uploaded successfully", imageUrls);
+			List<ImageUploadResultDTO> imageUrls = imageService.uploadImages(files, productId);
+			ResponseDTO<List<ImageUploadResultDTO>> response = new ResponseDTO<>(true, "Image uploaded successfully",
+					imageUrls);
 
 			log.info("Image uploaded successfully: {}", imageUrls);
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -58,6 +62,7 @@ public class ImageController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{productId}/{fileName}")
 	public ResponseEntity<ResponseDTO<Void>> deleteImage(@PathVariable Long productId, @PathVariable String fileName) {
 		log.info("Deleting image '{}' for product ID: {}", fileName, productId);
@@ -69,6 +74,7 @@ public class ImageController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/all/{productId}")
 	public ResponseEntity<ResponseDTO<Void>> deleteAllImages(@PathVariable Long productId) {
 		log.info("Deleting all images for product ID: {}", productId);
@@ -84,13 +90,17 @@ public class ImageController {
 	@GetMapping("/{folder}/{filename:.+}")
 	public ResponseEntity<Resource> getImage(@PathVariable String folder, @PathVariable String filename)
 			throws IOException {
-
 		Path imagePath = Paths.get(IMAGE_DIR + folder + "/" + filename);
 		if (!Files.exists(imagePath)) {
 			return ResponseEntity.notFound().build();
 		}
 
 		Resource resource = new UrlResource(imagePath.toUri());
-		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
+		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).header("Cache-Control", "public, max-age=31536000") // Cache
+																															// for
+																															// 1
+																															// year
+				.header("ETag", String.valueOf(Files.getLastModifiedTime(imagePath).toMillis())).body(resource);
+
 	}
 }

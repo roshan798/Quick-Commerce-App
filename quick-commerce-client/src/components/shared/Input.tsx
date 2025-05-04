@@ -1,25 +1,70 @@
-import React from "react";
-import clsx from "clsx";
+import { InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import { FieldError, UseFormRegisterReturn } from 'react-hook-form';
+import clsx from 'clsx';
 
-type InputProps = {
-    variant?: "default" | "error" | "success";
+type Variant = 'default' | 'outline' | 'filled';
+type InputType = 'text' | 'email' | 'password' | 'textarea'; // Extendable for more types
+
+interface BaseProps {
+    label?: string;
+    name: string;
+    register: UseFormRegisterReturn;
+    error?: FieldError;
+    variant?: Variant;
     className?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+}
 
-const Input: React.FC<InputProps> = ({ variant = "default", className, ...props }) => {
-    const baseStyles = "w-full px-4 py-2 rounded border outline-none transition-all duration-200";
+type InputProps = BaseProps & InputHTMLAttributes<HTMLInputElement>;
+type TextareaProps = BaseProps & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-    const variantStyles = {
-        default: "border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500",
-        error: "border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-500",
-        success: "border-green-500 focus:border-green-600 focus:ring-1 focus:ring-green-500",
-    };
+export const Input: React.FC<InputProps & { type?: InputType }> = ({
+    label,
+    name,
+    register,
+    error,
+    variant = 'default',
+    className,
+    type = 'text',
+    ...props
+}) => {
+    const sharedClasses = clsx(
+        'w-full p-2 rounded transition-all duration-200 focus:outline-none focus:ring-2',
+        variant === 'default' && 'border border-gray-300 focus:ring-blue-500',
+        variant === 'outline' && 'border-2 border-blue-500 focus:ring-blue-600',
+        variant === 'filled' &&
+            'bg-gray-100 border border-gray-300 focus:ring-blue-500',
+        error && 'border-red-500 focus:ring-red-500',
+        className
+    );
 
     return (
-        <input
-            className={clsx(baseStyles, variantStyles[variant], className)}
-            {...props}
-        />
+        <div className="w-full">
+            {label && (
+                <label
+                    htmlFor={name}
+                    className="block text-sm font-medium text-gray-700"
+                >
+                    {label}
+                </label>
+            )}
+            {type === 'textarea' ? (
+                <textarea
+                    id={name}
+                    {...register}
+                    {...(props as TextareaProps)}
+                    className={sharedClasses}
+                />
+            ) : (
+                <input
+                    id={name}
+                    type={type}
+                    {...register}
+                    {...(props as InputProps)}
+                    className={sharedClasses}
+                />
+            )}
+            {error && <small className="text-red-700">{error.message}</small>}
+        </div>
     );
 };
 

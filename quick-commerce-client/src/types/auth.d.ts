@@ -1,4 +1,4 @@
-import { ApiResponse, User } from ".";
+import { ApiResponse, User } from '.';
 
 export type LoginRequest = {
     email: string;
@@ -13,4 +13,3 @@ export type SignupRequest = {
 
 export type LoginResponse = ApiResponse<User>;
 export type SignupResponse = ApiResponse<User>;
-

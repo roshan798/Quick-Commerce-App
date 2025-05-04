@@ -1,94 +1,133 @@
 # Quick Commerce Project
 
 ## Overview
+
 This project consists of two main components:
+
 1. **quick-commerce-backend**: A Spring Boot application for backend services.
 2. **quick-commerce-client**: A React frontend application built with Vite.
 
 ## Prerequisites
+
 Ensure you have the following installed on your system:
-- **Java 21**
-- **Node.js 20**
-- **MySQL (or any preferred database)**
+
+-   **Java 21**
+-   **Node.js 20**
+-   **MySQL (or any preferred database)**
+-   **Docker** and **Docker Compose**
 
 ## Setup Instructions
 
 ### Backend Setup (Spring Boot)
+
 1. Navigate to the backend directory:
-   ```sh
-   cd quick-commerce-backend
-   ```
+    ```sh
+    cd quick-commerce-backend
+    ```
 2. Create an `application.yml` file inside `src/main/resources` and configure your database:
-   ```yaml
-   server:
-     port: 8080
-     servlet:
-       logging:
-         request-details: true
 
-   spring:
-     application:
-       name: QUICK-COMMERCE-SERVER
-     
-     datasource:
-       url: jdbc:mysql://localhost:3306/quick_commerce
-       username: root
-       password: root
-       driver-class-name: com.mysql.cj.jdbc.Driver
+    ```yaml
+    server:
+        port: 8080
+        servlet:
+            logging:
+                request-details: true
 
-     jpa:
-       hibernate:
-         ddl-auto: update
-       show-sql: true
+    spring:
+        application:
+            name: QUICK-COMMERCE-SERVER
 
-     security:
-       enabled: false
+        datasource:
+            url: jdbc:mysql://localhost:3306/quick_commerce
+            username: root
+            password: root
+            driver-class-name: com.mysql.cj.jdbc.Driver
 
-     devtools:
-       restart:
-         enabled: true
+        jpa:
+            hibernate:
+                ddl-auto: update
+            show-sql: true
 
-     web:
-       resources:
-         add-mappings: false
+        security:
+            enabled: false
 
-   logging:
-     level:
-       root: INFO
-       org.springframework.web: DEBUG
-       com.roshan798: TRACE
-       org.springframework.security: DEBUG
+        devtools:
+            restart:
+                enabled: true
 
-   jwt:
-     secret: <your_jwt_secret>
-    # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwiaWF0IjoxNjkxMjM0NT Y3LCJleHAiOjE3MjEyMzQ1Njd9.Gh1ZMzGkxflF3UQwzK79uVf5_TLpDhH_4hzlP4FJbW8
-   ```
+        web:
+            resources:
+                add-mappings: false
+
+    logging:
+        level:
+            root: INFO
+            org.springframework.web: DEBUG
+            com.roshan798: TRACE
+            org.springframework.security: DEBUG
+
+    jwt:
+        secret: <your_jwt_secret>
+        # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwiaWF0IjoxNjkxMjM0NT Y3LCJleHAiOjE3MjEyMzQ1Njd9.Gh1ZMzGkxflF3UQwzK79uVf5_TLpDhH_4hzlP4FJbW8
+    ```
+
 3. Build the project:
-   ```sh
-   ./mvnw clean install
-   ```
+    ```sh
+    ./mvnw clean install
+    ```
 4. Run the backend:
-   ```sh
-   ./mvnw spring-boot:run
-   ```
+    ```sh
+    ./mvnw spring-boot:run
+    ```
 
 ### Frontend Setup (React + Vite)
+
 1. Navigate to the client directory:
-   ```sh
-   cd quick-commerce-client
-   ```
+    ```sh
+    cd quick-commerce-client
+    ```
 2. Install dependencies:
-   ```sh
-   npm install
-   ```
+    ```sh
+    npm install
+    ```
 3. Create a `.env` file in the root directory and set up your API URL:
-   ```env
-   VITE_API_URL=http://localhost:8080/api
-   ```
+    ```env
+    VITE_API_URL=http://localhost:8080/api
+    ```
 4. Start the frontend application:
-   ```sh
-   npm run dev
-   ```
+    ```sh
+    npm run dev
+    ```
+
+### Docker Setup
+
+1. Add the following property in your application.yml file:
+
+```yml
+datasource:
+# url: jdbc:mysql://localhost:3306/quick_commerce
+url: jdbc:mysql://mysql:3306/quick_commerce # for docker container
+```
+
+2. Ensure Docker and Docker Compose are installed on your system.
+3. Build and start the application using Docker Compose:
+
+```sh
+docker-compose -f docker-compose.yml up --build
+```
+
+3. To stop the containers, run:
+
+```sh
+docker-compose down
+```
+
+4. To rebuild the containers without using the cache:
+
+```sh
+docker-compose build --no-cache
+```
 
 ## Contributing
+
 Feel free to fork the repository and create pull requests for improvements.

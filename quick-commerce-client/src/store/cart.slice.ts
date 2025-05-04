@@ -1,8 +1,14 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CartState } from "./types";
-import { ApiResponse, Cart, CartItem } from "../types";
-import { addToCart, removeFromCart, getUserCart, clearUserCart, removeItemFromCart } from "../http/cart";
-import { AppDispatch } from "../store";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CartState } from './types';
+import { ApiResponse, Cart, CartItem } from '../types';
+import {
+    addToCart,
+    removeFromCart,
+    getUserCart,
+    clearUserCart,
+    removeItemFromCart,
+} from '../http/cart';
+import { AppDispatch } from '../store';
 
 const initialState: CartState = {
     cart: null,
@@ -12,13 +18,16 @@ const updateTotalPrice = (state: CartState) => {
     if (state.cart) {
         state.cart = {
             ...state.cart,
-            totalPrice: state.cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+            totalPrice: state.cart.cartItems.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+            ),
         };
     }
 };
 
 const cartSlice = createSlice({
-    name: "cart",
+    name: 'cart',
     initialState,
     reducers: {
         setCart: (state, action: PayloadAction<Cart | null>) => {
@@ -29,7 +38,7 @@ const cartSlice = createSlice({
             if (state.cart) {
                 state.cart = {
                     ...state.cart,
-                    cartItems: [...state.cart.cartItems, action.payload]
+                    cartItems: [...state.cart.cartItems, action.payload],
                 };
                 updateTotalPrice(state);
             }
@@ -38,9 +47,11 @@ const cartSlice = createSlice({
             if (state.cart) {
                 state.cart = {
                     ...state.cart,
-                    cartItems: state.cart.cartItems.map(item =>
-                        item.productId === action.payload ? { ...item, quantity: item.quantity + 1 } : item
-                    )
+                    cartItems: state.cart.cartItems.map((item) =>
+                        item.productId === action.payload
+                            ? { ...item, quantity: item.quantity + 1 }
+                            : item
+                    ),
                 };
                 updateTotalPrice(state);
             }
@@ -50,12 +61,12 @@ const cartSlice = createSlice({
                 state.cart = {
                     ...state.cart,
                     cartItems: state.cart.cartItems
-                        .map(item =>
+                        .map((item) =>
                             item.productId === action.payload
                                 ? { ...item, quantity: item.quantity - 1 }
                                 : item
                         )
-                        .filter(item => item.quantity > 0)
+                        .filter((item) => item.quantity > 0),
                 };
                 updateTotalPrice(state);
             }
@@ -64,8 +75,10 @@ const cartSlice = createSlice({
             if (state.cart) {
                 state.cart = {
                     ...state.cart,
-                    cartItems: state.cart.cartItems.filter(a => a.productId != action.payload)
-                }
+                    cartItems: state.cart.cartItems.filter(
+                        (a) => a.productId != action.payload
+                    ),
+                };
                 updateTotalPrice(state);
             }
         },
@@ -74,58 +87,69 @@ const cartSlice = createSlice({
         },
     },
 });
-const { setCart, increaseQuantity, decreaseQuantity, clearCart, addAProduct,removeProductFromCartStore } = cartSlice.actions;
+const {
+    setCart,
+    increaseQuantity,
+    decreaseQuantity,
+    clearCart,
+    addAProduct,
+    removeProductFromCartStore,
+} = cartSlice.actions;
 
 export const fetchCart = () => async (dispatch: AppDispatch) => {
     try {
         const response = await getUserCart();
         dispatch(setCart(response.data.data));
     } catch (error) {
-        console.error("Error fetching cart:", error);
+        console.error('Error fetching cart:', error);
     }
 };
 
-export const increaseProductQuantity = (productId: number) => async (dispatch: AppDispatch) => {
-    try {
-        const res = await addToCart(productId);
-        const data: ApiResponse<Cart> = res.data;
-        const addedProduct = data.data.cartItems.find(a => a.productId === productId);
-        if (addedProduct) {
-            if (addedProduct.quantity === 1) {
-                dispatch(addAProduct(addedProduct));
-            } else {
-                dispatch(increaseQuantity(productId));
+export const increaseProductQuantity =
+    (productId: number) => async (dispatch: AppDispatch) => {
+        try {
+            const res = await addToCart(productId);
+            const data: ApiResponse<Cart> = res.data;
+            const addedProduct = data.data.cartItems.find(
+                (a) => a.productId === productId
+            );
+            if (addedProduct) {
+                if (addedProduct.quantity === 1) {
+                    dispatch(addAProduct(addedProduct));
+                } else {
+                    dispatch(increaseQuantity(productId));
+                }
             }
+        } catch (error) {
+            console.error('Error adding product to cart:', error);
         }
-    } catch (error) {
-        console.error("Error adding product to cart:", error);
-    }
-};
+    };
 
-export const decreaseProductQuantity = (productId: number) => async (dispatch: AppDispatch) => {
-    try {
-        await removeFromCart(productId);
-        dispatch(decreaseQuantity(productId));
-    } catch (error) {
-        console.error("Error removing product from cart:", error);
-    }
-};
-export const removeProductFromCart = (productId: number) => async (dispatch: AppDispatch) => {
-    try {
-        await removeItemFromCart(productId);
-        dispatch(removeProductFromCartStore(productId))
-
-    } catch (error) {
-        console.error("Error removing product from cart:", error);
-    }
-}
+export const decreaseProductQuantity =
+    (productId: number) => async (dispatch: AppDispatch) => {
+        try {
+            await removeFromCart(productId);
+            dispatch(decreaseQuantity(productId));
+        } catch (error) {
+            console.error('Error removing product from cart:', error);
+        }
+    };
+export const removeProductFromCart =
+    (productId: number) => async (dispatch: AppDispatch) => {
+        try {
+            await removeItemFromCart(productId);
+            dispatch(removeProductFromCartStore(productId));
+        } catch (error) {
+            console.error('Error removing product from cart:', error);
+        }
+    };
 
 export const clearCartItems = () => async (dispatch: AppDispatch) => {
     try {
         await clearUserCart();
         dispatch(clearCart());
     } catch (error) {
-        console.error("Error clearing cart:", error);
+        console.error('Error clearing cart:', error);
     }
 };
 export { clearCart };

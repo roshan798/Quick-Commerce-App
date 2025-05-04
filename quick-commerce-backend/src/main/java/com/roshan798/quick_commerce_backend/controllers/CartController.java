@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/cart")
+
 public class CartController {
 
 	@Autowired
@@ -26,7 +28,14 @@ public class CartController {
 	@Autowired
 	UserService userService;
 
-	@PostMapping("/add")
+	@GetMapping
+	public ResponseEntity<ResponseDTO<CartDTO>> getUserCart(HttpServletRequest request) {
+		String email = (String) request.getAttribute("email");
+		Cart cart = cartService.getUserCart(email);
+		return ResponseEntity.ok(new ResponseDTO<>(true, "Success", new CartDTO(cart)));
+	}
+
+	@PostMapping("/items")
 	public ResponseEntity<ResponseDTO<CartDTO>> increaseQuantity(@RequestParam Long productId,
 			HttpServletRequest request) {
 		String email = (String) request.getAttribute("email");
@@ -34,7 +43,7 @@ public class CartController {
 		return ResponseEntity.ok(new ResponseDTO<>(true, "Success", new CartDTO(cart)));
 	}
 
-	@PostMapping("/remove")
+	@PostMapping("/items/decrease")
 	public ResponseEntity<ResponseDTO<CartDTO>> decreaseQuantity(@RequestParam Long productId,
 			HttpServletRequest request) {
 		String email = (String) request.getAttribute("email");
@@ -43,22 +52,15 @@ public class CartController {
 		return ResponseEntity.ok(new ResponseDTO<>(true, "Success", new CartDTO(cart)));
 	}
 
-	@DeleteMapping("c")
-	public ResponseEntity<ResponseDTO<CartDTO>> removeProductFromCart(@RequestParam Long productId,
+	@DeleteMapping("/items/{productId}")
+	public ResponseEntity<ResponseDTO<CartDTO>> removeProductFromCart(@PathVariable Long productId,
 			HttpServletRequest request) {
 		String email = (String) request.getAttribute("email");
 		Cart cart = cartService.removeProductFromCart(productId, email);
 		return ResponseEntity.ok(new ResponseDTO<>(true, "Product removed from cart.", new CartDTO(cart)));
 	}
 
-	@GetMapping("/me")
-	public ResponseEntity<ResponseDTO<CartDTO>> getUserCart(HttpServletRequest request) {
-		String email = (String) request.getAttribute("email");
-		Cart cart = cartService.getUserCart(email);
-		return ResponseEntity.ok(new ResponseDTO<>(true, "Success", new CartDTO(cart)));
-	}
-
-	@DeleteMapping("/clear")
+	@DeleteMapping
 	public ResponseEntity<ResponseDTO<String>> clearCart(HttpServletRequest req) {
 
 		String userEmail = (String) req.getAttribute("email");

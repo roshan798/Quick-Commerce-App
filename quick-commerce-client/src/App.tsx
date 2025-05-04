@@ -16,60 +16,77 @@ import AdminRoute from './routes/AdminRoutes';
 
 const Error404 = lazy(() => import('./pages/Error404'));
 
-import adminPagesData from "./routes/admin"
+import adminPagesData from './routes/admin';
 import privatePagesData from './routes/private';
 import publicPagesData from './routes/public';
 import AdminSidebar from './components/AdminSidebar';
+import ProtectedRoute from './routes/ProtectedRoute';
+import sharedPagesData from './routes/protected';
 
 function App() {
-  const { loading } = useLoadingWithRefresh();
-  console.log('loading', loading);
-  const dispatch = useAppDispatch();
+    const { loading } = useLoadingWithRefresh();
+    const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(fetchCart());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+        dispatch(fetchCart());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  if (loading) {
-    return <div className="loading-screen">Loading...</div>;
-  }
+    if (loading) {
+        return <div className="loading-screen">Loading...</div>;
+    }
 
-  return (
-    <>
-      <Navbar />
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          <Route element={<AdminRoute />}>
-            {adminPagesData.map((page, index) => (
-              <Route
-                key={index}
-                path={page.path}
-                element={
-                  <AdminSidebar>
-                    <page.component />
-                  </AdminSidebar>
-                }
-              />
-            ))}
-          </Route>
-          <Route element={<PrivateRoute />}>
-            {privatePagesData.map((page, index) => (
-              <Route key={index} path={page.path} element={<page.component />} />
-            ))}
-          </Route>
-          <Route element={<PublicRoute />}>
-            {publicPagesData.map((page, index) => (
-              <Route key={index} path={page.path} element={<page.component />} />
-            ))}
-          </Route>
-          <Route path="*" element={<Error404 />} />
-        </Routes>
-      </Suspense>
-      <Footer />
-    </>
-  );
+    return (
+        <>
+            <Navbar />
+            <Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                    <Route element={<AdminRoute />}>
+                        {adminPagesData.map((page, index) => (
+                            <Route
+                                key={index}
+                                path={page.path}
+                                element={
+                                    <AdminSidebar>
+                                        <page.component />
+                                    </AdminSidebar>
+                                }
+                            />
+                        ))}
+                    </Route>
+                    <Route element={<ProtectedRoute />}>
+                        {sharedPagesData.map((page, index) => (
+                            <Route
+                                key={index}
+                                path={page.path}
+                                element={<page.component />}
+                            />
+                        ))}
+                    </Route>
+                    <Route element={<PrivateRoute />}>
+                        {privatePagesData.map((page, index) => (
+                            <Route
+                                key={index}
+                                path={page.path}
+                                element={<page.component />}
+                            />
+                        ))}
+                    </Route>
+                    <Route element={<PublicRoute />}>
+                        {publicPagesData.map((page, index) => (
+                            <Route
+                                key={index}
+                                path={page.path}
+                                element={<page.component />}
+                            />
+                        ))}
+                    </Route>
+                    <Route path="*" element={<Error404 />} />
+                </Routes>
+            </Suspense>
+            <Footer />
+        </>
+    );
 }
-
 
 export default App;

@@ -19,6 +19,7 @@ public class CartItemDTO {
 	private Long productId;
 	private Long cartItemId;
 	private String productName;
+	String productDescription;
 	private List<String> productImages;
 	private Integer quantity;
 	private Double price;
@@ -28,8 +29,10 @@ public class CartItemDTO {
 		this.cartItemId = cartItem.getId();
 		this.productId = product.getId();
 		this.productName = product.getName();
+		this.productDescription = product.getDescription();
 		this.productImages = product.getImageUrls();
 		this.quantity = cartItem.getQuantity();
 		this.price = product.getPrice();
+
 	}
 }

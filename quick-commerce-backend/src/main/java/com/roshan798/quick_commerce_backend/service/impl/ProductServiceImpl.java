@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
 			throw new ProductNotFound("No product with this ID: " + id);
 		}
 
-		log.info("Product found: {}", product.get());
+//		log.info("Product found: {}", product.get());
 		return product.get();
 	}
 

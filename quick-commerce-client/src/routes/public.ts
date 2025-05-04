@@ -1,21 +1,16 @@
-import { lazy } from "react";
-
-export type PagesData = {
-    path: string;
-    name: string;
-    component: React.LazyExoticComponent<React.ComponentType<unknown>>;
-};
+import { lazy } from 'react';
+import { PagesData } from '../types';
 
 const publicPages: PagesData[] = [
     {
-        path: "/signup",
-        name: "Signup",
-        component: lazy(() => import("../pages/user/Signup")),
+        path: '/signup',
+        name: 'Signup',
+        component: lazy(() => import('../pages/user/Signup')),
     },
     {
-        path: "/login",
-        name: "Login",
-        component: lazy(() => import("../pages/user/Login")),
+        path: '/login',
+        name: 'Login',
+        component: lazy(() => import('../pages/user/Login')),
     },
 ];
 

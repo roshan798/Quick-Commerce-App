@@ -26,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+	private final int ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60; // 1 Hour
+	private final int REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24; // 7 Days
 	@Autowired
 	private UserRepo userRepo;
 
@@ -54,8 +56,8 @@ public class AuthServiceImpl implements AuthService {
 		String accessToken = jwtUtil.generateAccessToken(email, String.valueOf(user.get().getRole()));
 		String refreshToken = jwtUtil.generateRefreshToken(email, String.valueOf(user.get().getRole()));
 
-		addCookie(response, "access_token", accessToken);
-		addCookie(response, "refresh_token", refreshToken);
+		addCookie(response, "access_token", accessToken, ACCESS_TOKEN_EXPIRATION);
+		addCookie(response, "refresh_token", refreshToken, REFRESH_TOKEN_EXPIRATION);
 
 		log.info("User logged in successfully: {}", email);
 		return user.get();
@@ -125,18 +127,19 @@ public class AuthServiceImpl implements AuthService {
 		String newAccessToken = jwtUtil.generateAccessToken(email, String.valueOf(user.getRole()));
 		String newRefreshToken = jwtUtil.generateRefreshToken(email, String.valueOf(user.getRole()));
 
-		addCookie(response, "access_token", newAccessToken);
-		addCookie(response, "refresh_token", newRefreshToken);
+		addCookie(response, "access_token", newAccessToken, ACCESS_TOKEN_EXPIRATION);
+		addCookie(response, "refresh_token", newRefreshToken, REFRESH_TOKEN_EXPIRATION);
 
 		log.info("Tokens refreshed successfully for user: {}", email);
 		return user;
 	}
 
-	private void addCookie(HttpServletResponse response, String name, String value) {
+	private void addCookie(HttpServletResponse response, String name, String value, int expirationTime) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setHttpOnly(true);
 		cookie.setSecure(true);
 		cookie.setPath("/");
+		cookie.setMaxAge(expirationTime);
 		response.addCookie(cookie);
 	}
 }

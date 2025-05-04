@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TokenService {
 
+	private final int ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60; // for 1 Hour minutes
+
 	@Autowired
 	private JwtUtil jwtUtil;
 
@@ -64,6 +66,7 @@ public class TokenService {
 			newAccessTokenCookie.setHttpOnly(true);
 			newAccessTokenCookie.setSecure(true);
 			newAccessTokenCookie.setPath("/");
+			newAccessTokenCookie.setMaxAge(ACCESS_TOKEN_EXPIRATION);
 
 			response.addCookie(newAccessTokenCookie);
 

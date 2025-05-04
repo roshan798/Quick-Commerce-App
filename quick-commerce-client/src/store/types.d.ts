@@ -1,15 +1,14 @@
-import { Cart, User } from "../types"
+import { Cart, User } from '../types';
 
 export type UserState = {
-    user: User | null
-}
-
+    user: User | null;
+};
 
 export type RootState = {
-    auth: UserState,
-    cart : CartState
-}
+    auth: UserState;
+    cart: CartState;
+};
 
 export type CartState = {
-    cart : Cart | null
-}
+    cart: Cart | null;
+};

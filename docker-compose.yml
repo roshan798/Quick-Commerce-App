@@ -1,0 +1,48 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: quick_commerce  
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:  # ✅ Added healthcheck
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
+
+  backend:
+    build: ./quick-commerce-backend
+    container_name: backend_service
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: quick_commerce
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./quick-commerce-client
+    container_name: frontend_service
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080/api/v1
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./quick-commerce-client:/app
+      - /app/node_modules
+
+volumes:
+  mysql_data:

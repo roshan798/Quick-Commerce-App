@@ -1,29 +1,28 @@
-import { useEffect, useState } from "react";
-import { AxiosResponse } from "axios";
-import { PaginatedApiResponse, Product } from "../../types";
-import { deleteProductById, getAllProducts } from "../../http/product";
-import { Link } from "react-router-dom";
-import Button from "../../components/shared/Button";
-import { Plus } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
+import { PaginatedApiResponse, Product } from '../../types';
+import { deleteProductById, getAllProducts } from '../../http/product';
+import { Link } from 'react-router-dom';
+import Button from '../../components/shared/Button';
+import { Plus } from 'lucide-react';
+import Carousel from '../../components/shared/Carousel';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Dashboard = () => {
-    console.log("DASHBOARD");
-    
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [size, setSize] = useState<number>(6);
     const [totalPages, setTotalPages] = useState<number>(1);
-
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const response: AxiosResponse<PaginatedApiResponse<Product[]>> = await getAllProducts(page, size);
+                const response: AxiosResponse<PaginatedApiResponse<Product[]>> =
+                    await getAllProducts(page, size);
                 setProducts(response.data.data);
                 setTotalPages(response.data.totalPages);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error('Error fetching products:', error);
             } finally {
                 setLoading(false);
             }
@@ -33,32 +32,41 @@ const Dashboard = () => {
     }, [page, size]);
 
     const handleDelete = async (productId: number) => {
-        if (!confirm("Are you sure you want to delete this product?")) return;
+        if (!confirm('Are you sure you want to delete this product?')) return;
 
         try {
-            await deleteProductById(productId)
-            setProducts((prev) => prev.filter((product) => product.productId !== productId));
+            await deleteProductById(productId);
+            setProducts((prev) =>
+                prev.filter((product) => product.productId !== productId)
+            );
         } catch (error) {
-            console.error("Error deleting product:", error);
+            console.error('Error deleting product:', error);
         }
     };
 
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="container mx-auto px-4 py-10">
-                <h2 className="text-3xl font-semibold text-center mb-8">Admin Dashboard</h2>
+                <h2 className="text-3xl font-semibold text-center mb-8">
+                    Admin Dashboard
+                </h2>
 
                 {/* Page Size Selector */}
                 <div className="flex justify-between mb-4">
                     <h3 className="text-lg font-medium">Manage Products</h3>
                     <div className="flex items-center gap-4">
-                        <Link to="/admin/add-product" className="relative">
-                            <Button variant="outline-primary" icon={<Plus size={20} />}>
+                        <Link to="/admin/products/add" className="relative">
+                            <Button
+                                variant="outline-primary"
+                                icon={<Plus size={20} />}
+                            >
                                 Add Product
                             </Button>
                         </Link>
                         <div className="flex items-center">
-                            <label className="mr-2 font-medium">Products per page:</label>
+                            <label className="mr-2 font-medium">
+                                Products per page:
+                            </label>
                             <select
                                 value={size}
                                 onChange={(e) => {
@@ -76,41 +84,73 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-
                 {loading ? (
-                    <div className="text-center text-lg font-semibold">Loading products...</div>
+                    <div className="text-center text-lg font-semibold">
+                        Loading products...
+                    </div>
                 ) : (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {products.length > 0 ? (
                                 products.map((product) => (
-                                    <div key={product.productId} className="bg-white p-4 shadow rounded-lg">
-                                        {/* Product Image */}
-                                        {product.images && product.images.length > 0 ? (
-                                            <img
-                                                src={BASE_URL + product.images[0]} // Display the first image
-                                                alt={product.name}
-                                                className="w-full h-40 object-contain rounded-lg mb-2"
+                                    <div
+                                        key={product.productId}
+                                        className="bg-white p-4 shadow rounded-lg"
+                                    >
+                                        {product.images &&
+                                        product.images.length > 0 ? (
+                                            <Carousel
+                                                className="w-full max-w-[500px] aspect-square rounded-sm"
+                                                images={product.images.map(
+                                                    (url) => {
+                                                        return BASE_URL + url;
+                                                    }
+                                                )}
                                             />
                                         ) : (
                                             <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg mb-2">
-                                                <span className="text-gray-500">No Image Available</span>
+                                                <span className="text-gray-500">
+                                                    No Image Available
+                                                </span>
                                             </div>
                                         )}
 
                                         {/* Product Details */}
-                                        <h3 className="font-semibold text-lg">{product.name}</h3>
-                                        <p className="text-gray-500 text-sm">{product.description || "No description available."}</p>
-                                        <p className="text-gray-700 font-semibold mt-1">₹{product.price.toFixed(2)}</p>
+                                        <h3 className="font-semibold text-lg">
+                                            {product.name}
+                                        </h3>
+                                        <p className="text-gray-500 text-sm">
+                                            {product.description ||
+                                                'No description available.'}
+                                        </p>
+                                        <p className="text-gray-700 font-semibold mt-1">
+                                            ₹{product.price.toFixed(2)}
+                                        </p>
                                         <div className="mt-4 flex gap-2">
-                                            <Button variant="primary">Edit</Button>
-                                            <Button variant="danger" onClick={() => handleDelete(product.productId)}>Delete</Button>
+                                            <Button variant="primary">
+                                                <Link
+                                                    to={`/admin/products/update/${product.productId}`}
+                                                >
+                                                    Edit
+                                                </Link>
+                                            </Button>
+                                            <Button
+                                                variant="danger"
+                                                onClick={() =>
+                                                    handleDelete(
+                                                        product.productId
+                                                    )
+                                                }
+                                            >
+                                                Delete
+                                            </Button>
                                         </div>
                                     </div>
-
                                 ))
                             ) : (
-                                <p className="text-center text-gray-500 col-span-full">No products available.</p>
+                                <p className="text-center text-gray-500 col-span-full">
+                                    No products available.
+                                </p>
                             )}
                         </div>
 

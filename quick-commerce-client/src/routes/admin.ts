@@ -1,32 +1,32 @@
-import { lazy } from "react";
-
-export type PagesData = {
-    path: string;
-    name: string;
-    component: React.LazyExoticComponent<React.ComponentType<unknown>>;
-};
+import { lazy } from 'react';
+import { PagesData } from '../types';
 
 const pagesData: PagesData[] = [
     {
-        path: "/admin/dashboard",
-        name: "Dashboard",
-        component: lazy(() => import("../pages/admin/Dashboard")),
+        path: '/admin/dashboard',
+        name: 'Dashboard',
+        component: lazy(() => import('../pages/admin/Dashboard')),
     },
     {
-        path: "/admin/add-product",
-        name: "Add Product",
-        component: lazy(() => import("../pages/admin/AddOrUpdateProduct")),
+        path: '/admin/products',
+        name: 'Products',
+        component: lazy(() => import('../pages/admin/Products/Products')),
     },
     {
-        path: "/admin/products",
-        name: "Products",
-        component: lazy(() => import("../pages/admin/Products")),
+        path: '/admin/products/add',
+        name: 'Add Product',
+        component: lazy(() => import('../pages/admin/AddProduct')),
     },
     {
-        path: "/admin/add-or-update-product/:productId",
-        name: "Add Product",
-        component: lazy(() => import("../pages/admin/AddOrUpdateProduct"))
-    }
+        path: '/admin/products/update/:productId',
+        name: 'Update Product',
+        component: lazy(() => import('../pages/admin/UpdateProduct')),
+    },
+    {
+        path: '/admin/products/images/:productId',
+        name: 'Manage Images',
+        component: lazy(() => import('../pages/admin/ManageImages')),
+    },
 ];
 
 export default pagesData;

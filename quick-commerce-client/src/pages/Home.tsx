@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { AxiosResponse } from "axios";
-import { getAllProducts } from "../http/product";
-import { PaginatedApiResponse, Product } from "../types";
-import ProductCard from "../components/ProductCard";
+import { useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
+import { getAllProducts } from '../http/product';
+import { PaginatedApiResponse, Product } from '../types';
+import ProductCard from '../components/ProductCard';
 
 const Home = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -15,11 +15,12 @@ const Home = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const response: AxiosResponse<PaginatedApiResponse<Product[]>> = await getAllProducts(page, size);
+                const response: AxiosResponse<PaginatedApiResponse<Product[]>> =
+                    await getAllProducts(page, size);
                 setProducts(response.data.data);
                 setTotalPages(response.data.totalPages);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error('Error fetching products:', error);
             } finally {
                 setLoading(false);
             }
@@ -31,11 +32,15 @@ const Home = () => {
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="container mx-auto px-4 py-10">
-                <h2 className="text-3xl font-semibold text-center mb-8">Featured Products</h2>
+                <h2 className="text-3xl font-semibold text-center mb-8">
+                    Featured Products
+                </h2>
 
                 {/* Page Size Selector */}
                 <div className="flex justify-end mb-4">
-                    <label className="mr-2 font-medium">Products per page:</label>
+                    <label className="mr-2 font-medium">
+                        Products per page:
+                    </label>
                     <select
                         value={size}
                         onChange={(e) => {
@@ -51,14 +56,23 @@ const Home = () => {
                     </select>
                 </div>
                 {loading ? (
-                    <div className="text-center text-lg font-semibold">Loading products...</div>
+                    <div className="text-center text-lg font-semibold">
+                        Loading products...
+                    </div>
                 ) : (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {products.length > 0 ? (
-                                products.map((product) => <ProductCard key={product.productId} product={product} />)
+                                products.map((product) => (
+                                    <ProductCard
+                                        key={product.productId}
+                                        product={product}
+                                    />
+                                ))
                             ) : (
-                                <p className="text-center text-gray-500 col-span-full">No products available.</p>
+                                <p className="text-center text-gray-500 col-span-full">
+                                    No products available.
+                                </p>
                             )}
                         </div>
                         {/* Pagination Controls */}
